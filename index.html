@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bem-vindo ao MarketSniper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variáveis CSS para temas */
+        :root {
+            --bg-color: #10182F;
+            --header-bg: #1C2541;
+            --card-bg: #1D2B4A;
+            --text-color: #f1f1f1;
+            --secondary-text-color: #cdd6f4;
+            --tertiary-text-color: #abb2bf;
+            --btn-primary: #58a6ff; /* Azul vibrante */
+            --btn-hover: #4a90e2; /* Azul mais escuro no hover */
+            --border-color: #334466;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --plan-feature-color: #9bd2ff;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--header-bg);
+            padding: 18px 25px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--btn-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 32px;
+            margin-right: 10px;
+            width: 32px;
+            filter: invert(50%) sepia(80%) saturate(2000%) hue-rotate(190deg) brightness(1.2) contrast(1.2);
+        }
+
+        .nav-buttons button {
+            background-color: var(--btn-primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 15px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .nav-buttons button:hover {
+            background-color: var(--btn-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        #hero {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, var(--bg-color), var(--header-bg));
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #hero h1 {
+            font-size: 3.5em;
+            color: var(--btn-primary);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        #hero p {
+            font-size: 1.4em;
+            color: var(--secondary-text-color);
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+
+        #hero .btn-hero {
+            background-color: var(--btn-primary);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: 700;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #hero .btn-hero:hover {
+            background-color: var(--btn-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Features Section */
+        #features {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        #features h2 {
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            color: var(--btn-primary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px var(--shadow-color);
+        }
+
+        .feature-item img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            transition: transform 0.4s ease-in-out;
+            filter: invert(70%) sepia(80%) saturate(2000%) hue-rotate(190deg) brightness(1.2) contrast(1.2); /* Cor azulada para os ícones */
+        }
+
+        .feature-item:hover img {
+            transform: rotate(10deg) scale(1.05);
+        }
+
+        .feature-item h3 {
+            font-size: 1.6em;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .feature-item p {
+            font-size: 1.1em;
+            color: var(--tertiary-text-color);
+        }
+
+        /* Plans Section */
+        #plans {
+            padding: 60px 20px;
+            background-color: var(--header-bg);
+            text-align: center;
+        }
+
+        #plans h2 {
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            color: var(--btn-primary);
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .plan-card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+            transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Para espaçar o conteúdo e o botão */
+        }
+
+        .plan-card.highlight {
+            border-color: var(--btn-primary);
+            transform: scale(1.03);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px var(--shadow-color);
+        }
+
+        .plan-card h3 {
+            font-size: 2em;
+            color: var(--btn-primary);
+            margin-bottom: 10px;
+        }
+
+        .plan-card .price {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .plan-card .price span {
+            font-size: 0.5em;
+            color: var(--tertiary-text-color);
+        }
+
+        .plan-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 30px 0;
+            flex-grow: 1; /* Permite que a lista ocupe o espaço disponível */
+        }
+
+        .plan-card li {
+            font-size: 1.1em;
+            color: var(--plan-feature-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .plan-card li::before {
+            content: '✔';
+            color: var(--btn-primary);
+            margin-right: 10px;
+            font-weight: 700;
+        }
+
+        .plan-card .btn-choose {
+            background-color: var(--btn-primary);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .plan-card .btn-choose:hover {
+            background-color: var(--btn-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Policies Section (Accordion) */
+        #policies {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        #policies h2 {
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            color: var(--btn-primary);
+        }
+
+        .accordion-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: left;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px var(--shadow-color);
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            background-color: var(--card-bg);
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--text-color);
+            transition: background-color 0.3s;
+        }
+
+        .accordion-header:hover {
+            background-color: var(--header-bg);
+        }
+
+        .accordion-header .icon {
+            font-size: 1.5em;
+            transition: transform 0.3s;
+        }
+
+        .accordion-header.active .icon {
+            transform: rotate(45deg);
+        }
+
+        .accordion-content {
+            background-color: var(--bg-color);
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+            color: var(--tertiary-text-color);
+        }
+
+        .accordion-content p {
+            margin: 0 0 15px 0;
+            padding-top: 15px; /* Adiciona padding-top para o primeiro parágrafo */
+        }
+
+        .accordion-content.open {
+            max-height: 500px; /* Valor grande o suficiente para a maioria dos conteúdos */
+            padding-bottom: 20px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--header-bg);
+            color: var(--secondary-text-color);
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 0.9em;
+            margin-top: 50px;
+            box-shadow: 0 -2px 5px var(--shadow-color);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #hero h1 {
+                font-size: 2.5em;
+            }
+
+            #hero p {
+                font-size: 1.1em;
+            }
+
+            #hero .btn-hero {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+
+            #features h2, #plans h2, #policies h2 {
+                font-size: 2em;
+            }
+
+            .features-grid, .plans-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-buttons button {
+                margin-left: 10px;
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            .logo {
+                font-size: 22px;
+            }
+            .logo img {
+                height: 28px;
+                width: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="https://cdn-icons-png.flaticon.com/512/3722/3722301.png" alt="Motorcycle Icon"> MarketSniper
+        </div>
+        <div class="nav-buttons">
+            <button onclick="location.href='login.html'">Entrar</button>
+            <button onclick="location.href='cadastro.html'">Cadastrar</button>
+        </div>
+    </header>
+
+    <section id="hero">
+        <h1>Sua Vantagem Secreta nas Compras Online</h1>
+        <p>MarketSniper monitora os preços dos seus produtos favoritos em tempo real, enviando alertas para você nunca mais perder uma oferta. Sua compra inteligente começa aqui!</p>
+        <a href="cadastro.html" class="btn-hero">Começar Agora</a>
+    </section>
+
+    <section id="features">
+        <h2>O que fazemos por você?</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <img src="https://cdn-icons-png.flaticon.com/512/2903/2903009.png" alt="Monitor Icon">
+                <h3>Monitoramento de Preços</h3>
+                <p>Acompanhamos milhares de produtos em diversos marketplaces, 24 horas por dia, 7 dias por semana.</p>
+            </div>
+            <div class="feature-item">
+                <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png" alt="Heart Icon">
+                <h3>Lista de Desejos Personalizada</h3>
+                <p>Adicione seus produtos favoritos e nós cuidamos do resto, organizando tudo para você.</p>
+            </div>
+            <div class="feature-item">
+                <img src="https://cdn-icons-png.flaticon.com/512/2838/2838912.png" alt="Alert Icon">
+                <h3>Alertas Inteligentes</h3>
+                <p>Receba notificações instantâneas no seu dispositivo quando o preço cair ou atingir seu alvo.</p>
+            </div>
+            <div class="feature-item">
+                <img src="https://cdn-icons-png.flaticon.com/512/1531/1531776.png" alt="Chart Icon">
+                <h3>Análise de Mercado</h3>
+                <p>Visualize o histórico de preços e tendências para tomar decisões de compra mais inteligentes.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="plans">
+        <h2>Nossos Planos</h2>
+        <div class="plans-grid">
+            <div class="plan-card">
+                <h3>Básico</h3>
+                <div class="price">R$20<span>/mês</span></div>
+                <ul>
+                    <li>Monitoramento limitado de produtos</li>
+                    <li>Alertas por e-mail</li>
+                    <li>Histórico de preços (3 dias)</li>
+                </ul>
+                <button onclick="location.href='cadastro.html'" class="btn-choose">Escolher Plano</button>
+            </div>
+            <div class="plan-card highlight">
+                <h3>Premium</h3>
+                <div class="price">R$49.90<span>/mês</span></div>
+                <ul>
+                    <li>Monitoramento ilimitado de produtos</li>
+                    <li>Alertas em tempo real (push)</li>
+                    <li>Histórico de preços completo (7 dias)</li>
+                    <li>Prioridade no suporte</li>
+                    <li>Sem anúncios</li>
+                </ul>
+                <button onclick="location.href='cadastro.html'" class="btn-choose">Escolher Plano</button>
+            </div>
+            <div class="plan-card">
+                <h3>Ultimate</h3>
+                <div class="price">R$89.90<span>/mês</span></div>
+                <ul>
+                    <li>Todos os recursos do Premium</li>
+                    <li>Análise preditiva de preços</li>
+                    <li>Gerenciador de múltiplos perfis</li>
+                    <li>Consultoria personalizada</li>
+                    <li>Acesso a relatórios exclusivos</li>
+                    <li>Histórico de preços completo (30 dias)</li>
+                </ul>
+                <button onclick="location.href='cadastro.html'" class="btn-choose">Escolher Plano</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="policies">
+        <h2>Nossas Políticas</h2>
+        <div class="accordion-container">
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    Termos de Serviço
+                    <span class="icon">+</span>
+                </div>
+                <div class="accordion-content">
+                    <p>Bem-vindo ao MarketSniper! Ao utilizar nossos serviços, você concorda com os termos e condições descritos aqui. Nosso objetivo é fornecer a você uma ferramenta de monitoramento de preços eficaz e transparente. Comprometemo-nos a manter a segurança e a privacidade dos seus dados, utilizando-os apenas para os fins específicos do serviço. Qualquer uso indevido da plataforma ou tentativa de manipulação de dados resultará na suspensão ou encerramento da sua conta.</p>
+                    <p>Reservamo-nos o direito de modificar estes termos a qualquer momento, e as alterações serão comunicadas através da plataforma. É sua responsabilidade revisar periodicamente esta seção para se manter atualizado. O uso continuado do serviço após qualquer alteração constitui aceitação dos novos termos. Em caso de dúvidas ou necessidade de suporte, nossa equipe está à disposição para ajudar.</p>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    Política de Privacidade
+                    <span class="icon">+</span>
+                </div>
+                <div class="accordion-content">
+                    <p>Sua privacidade é fundamental para nós. Esta política descreve como coletamos, usamos e protegemos suas informações pessoais. Coletamos dados como e-mail e preferências de produtos para personalizar sua experiência e enviar alertas de preços relevantes. Não compartilhamos suas informações com terceiros para fins de marketing sem seu consentimento explícito.</p>
+                    <p>Implementamos medidas de segurança robustas para proteger seus dados contra acesso não autorizado, alteração, divulgação ou destruição. Seus dados são armazenados em servidores seguros e o acesso é restrito a pessoal autorizado. Você tem o direito de acessar, corrigir ou excluir suas informações a qualquer momento através das configurações da sua conta. Em caso de violação de dados, notificaremos os usuários afetados e as autoridades competentes conforme exigido por lei.</p>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    Política de Cookies
+                    <span class="icon">+</span>
+                </div>
+                <div class="accordion-content">
+                    <p>Nosso site utiliza cookies para melhorar sua experiência de navegação. Cookies são pequenos arquivos de texto armazenados no seu dispositivo que nos permitem reconhecê-lo em visitas futuras e personalizar o conteúdo exibido. Utilizamos cookies essenciais para o funcionamento básico da plataforma, como manter sua sessão logada e lembrar suas preferências.</p>
+                    <p>Também utilizamos cookies de desempenho e análise para entender como os usuários interagem com nosso site, o que nos ajuda a otimizá-lo. Você pode gerenciar suas preferências de cookies através das configurações do seu navegador. Ao continuar a usar o MarketSniper, você concorda com o uso de cookies conforme descrito nesta política. Para mais detalhes, consulte a documentação do seu navegador sobre controle de cookies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2025 MarketSniper. Todos os direitos reservados.
+    </footer>
+
+    <script>
+        function toggleAccordion(header) {
+            header.classList.toggle('active');
+            const content = header.nextElementSibling;
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                content.style.maxHeight = null;
+                content.style.paddingBottom = '0';
+            } else {
+                content.classList.add('open');
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.paddingBottom = '20px';
+            }
+        }
+    </script>
+</body>
+</html>
