@@ -16,7 +16,6 @@
       justify-content: center;
       height: 100vh;
     }
-
     .login-container {
       background: #1C2541;
       padding: 40px;
@@ -25,14 +24,12 @@
       width: 100%;
       max-width: 400px;
     }
-
     h2 {
       text-align: center;
       margin-bottom: 25px;
       font-weight: 700;
       color: #58a6ff;
     }
-
     input, button {
       width: 100%;
       padding: 12px;
@@ -41,28 +38,23 @@
       border-radius: 8px;
       font-size: 16px;
     }
-
     input {
       background-color: #24304E;
       color: white;
     }
-
     input:focus {
       background: #2f3e68;
       outline: none;
     }
-
     button {
       background: #28a745;
       color: white;
       font-weight: 600;
       cursor: pointer;
     }
-
     button:hover {
       opacity: 0.9;
     }
-
     .link {
       display: block;
       text-align: center;
@@ -80,26 +72,38 @@
     <button onclick="login()">Login</button>
     <a href="cadastro.html" class="link">Criar conta</a>
   </div>
-
   <script>
     function login() {
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
+      const email = document.getElementById("email").value.trim();
+      const senha = document.getElementById("senha").value.trim();
 
       const adminEmail = "admin@site.com";
       const adminSenha = "admin123";
 
-      if (!email || !senha) return alert("Preencha todos os campos");
-
-      localStorage.setItem("userEmail", email);
-
-      if (email === adminEmail && senha === adminSenha) {
-        alert("Bem-vindo, Admin!");
-      } else {
-        alert("Login realizado!");
+      if (!email || !senha) {
+        alert("Preencha todos os campos.");
+        return;
       }
 
-      window.location.href = "site.html";
+      // Verifica se é o admin
+      if (email === adminEmail && senha === adminSenha) {
+        localStorage.setItem("userEmail", email);
+        alert("Bem-vindo, Admin!");
+        window.location.href = "site.html";
+        return;
+      }
+
+      // Carrega usuários cadastrados
+      const usuarios = JSON.parse(localStorage.getItem("usuariosCadastrados")) || [];
+      const usuarioEncontrado = usuarios.find(user => user.email === email && user.senha === senha);
+
+      if (usuarioEncontrado) {
+        localStorage.setItem("userEmail", email);
+        alert("Login realizado com sucesso!");
+        window.location.href = "site.html";
+      } else {
+        alert("E-mail ou senha inválidos. Por favor, tente novamente ou crie uma conta.");
+      }
     }
   </script>
 </body>
