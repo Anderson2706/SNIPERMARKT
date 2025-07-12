@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>MarketSniper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variáveis CSS para temas */
+        :root {
+            --bg-color: #10182F;
+            --header-bg: #1C2541;
+            --menu-bg: #1F2A47;
+            --card-bg: #1D2B4A;
+            --text-color: #f1f1f1;
+            --secondary-text-color: #cdd6f4;
+            --tertiary-text-color: #abb2bf;
+            --input-bg: #24304E;
+            --input-focus-bg: #2f3e68;
+            --border-color: #334466;
+            --suggestion-bg: #2b3552;
+            --suggestion-hover-bg: #3d496a;
+            --btn-green: #28a745;
+            --btn-orange: #fd7e14;
+            --btn-purple: #6f42c1;
+            --btn-red: #dc3545;
+            --blue-highlight: #58a6ff;
+            --hot-fire-color: #FF8C00; /* Laranja mais vibrante para o fogo */
+            --hot-glow-color: #FFD700; /* Amarelo dourado para o brilho */
+        }
+        body.light-mode {
+            --bg-color: #f0f2f5;
+            --header-bg: #ffffff;
+            --menu-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --secondary-text-color: #555;
+            --tertiary-text-color: #777;
+            --input-bg: #e9ecef;
+            --input-focus-bg: #dee2e6;
+            --border-color: #ccc;
+            --suggestion-bg: #e0e0e0;
+            --suggestion-hover-bg: #d0d0d0;
+            --btn-green: #218838;
+            --btn-orange: #fd7e14;
+            --btn-purple: #5a2e9d;
+            --btn-red: #c82333;
+            --blue-highlight: #007bff;
+            --hot-fire-color: #FF4500; /* Laranja mais escuro para o fogo no modo claro */
+            --hot-glow-color: #FFD700; /* Amarelo dourado para o brilho */
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--header-bg);
+            padding: 18px 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--blue-highlight);
+            display: flex;
+            align-items: center;
+        }
+        .logo img {
+            height: 28px;
+            margin-right: 10px;
+            width: 28px;
+        }
+        .search-bar {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+        .search-bar input:focus {
+            outline: none;
+            background-color: var(--input-focus-bg);
+        }
+        .suggestions {
+            position: absolute;
+            top: 42px;
+            left: 0;
+            right: 0;
+            background: var(--suggestion-bg);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            z-index: 1000;
+        }
+        .suggestions div {
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .suggestions div:hover {
+            background: var(--suggestion-hover-bg);
+        }
+        .hamburger {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 24px;
+        }
+        .hamburger div {
+            width: 30px;
+            height: 4px;
+            background: var(--text-color);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .hamburger.active div:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.active div:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active div:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        .menu {
+            display: none;
+            background-color: var(--menu-bg);
+            padding: 20px 25px;
+        }
+        .menu.active {
+            display: block;
+        }
+        .menu a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        .menu a img {
+            height: 20px;
+            margin-right: 10px;
+            width: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 22px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+        }
+        .section-title img {
+            height: 24px;
+            margin-right: 10px;
+            width: 24px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0 25px 40px;
+            gap: 25px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            width: 300px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+        }
+        .card h3 {
+            margin-top: 0;
+            font-size: 18px;
+            color: var(--text-color);
+            display: flex; /* Para alinhar o ícone de copiar */
+            align-items: center; /* Para alinhar o ícone de copiar */
+        }
+        .price {
+            font-size: 16px;
+            color: var(--secondary-text-color);
+            margin: 10px 0;
+            display: flex; /* Para alinhar o ícone de copiar */
+            align-items: center; /* Para alinhar o ícone de copiar */
+        }
+        .description {
+            font-size: 14px;
+            color: var(--tertiary-text-color);
+            margin: 15px 0 0 0;
+            white-space: pre-wrap;
+            display: flex; /* Para alinhar o ícone de copiar */
+            align-items: center; /* Para alinhar o ícone de copiar */
+        }
+        .marketplace-list {
+            margin-top: 10px;
+        }
+        .marketplace-item {
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .marketplace-item img {
+            height: 16px;
+            width: 16px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 8px; /* Espaçamento entre botões */
+        }
+        .buttons .btn {
+            flex-grow: 1; /* Faz os botões crescerem para preencher o espaço */
+            text-align: center;
+        }
+        .btn {
+            padding: 10px 12px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .btn-green { background-color: var(--btn-green); }
+        .btn-orange { background-color: var(--btn-orange); }
+        .btn-purple { background-color: var(--btn-purple); }
+        .btn-red { background-color: var(--btn-red); }
+        .btn:hover { opacity: 0.85; }
+        /* Detalhes expansíveis */
+        .detalhes-container {
+            margin-top: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+            color: var(--secondary-text-color);
+            font-size: 14px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+        }
+        .detalhes-container.show {
+            max-height: 300px;
+            padding-top: 12px;
+        }
+        .detalhes-container .description {
+            max-height: 160px;
+            overflow-y: auto;
+            padding-right: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--blue-highlight) var(--input-bg);
+            white-space: pre-wrap;
+            color: var(--tertiary-text-color);
+            font-size: 14px;
+            margin-top: 8px;
+            display: flex; /* Para alinhar o ícone de copiar */
+            align-items: flex-start; /* Alinha no topo para multilinhas */
+            gap: 5px; /* Espaçamento entre texto e ícone */
+        }
+        /* Custom scrollbar para Webkit (Chrome, Edge, Safari) */
+        .detalhes-container .description::-webkit-scrollbar {
+            width: 6px;
+        }
+        .detalhes-container .description::-webkit-scrollbar-track {
+            background: var(--input-bg);
+            border-radius: 4px;
+        }
+        .detalhes-container .description::-webkit-scrollbar-thumb {
+            background-color: var(--blue-highlight);
+            border-radius: 4px;
+        }
+        /* Estilos para os ícones no painel de admin */
+        .admin-section h3, .admin-section h4, .admin-section p {
+            display: flex;
+            align-items: center;
+        }
+        .admin-section img {
+            height: 20px;
+            margin-right: 8px;
+            width: 20px;
+        }
+        /* FILTRO PARA COLORIR OS ÍCONES */
+        .icon-colored {
+            filter: invert(50%) sepia(80%) saturate(2000%) hue-rotate(190deg) brightness(1.2) contrast(1.2);
+        }
+        .icon-colored.arrow-straight-icon {
+            filter: invert(90%) sepia(30%) saturate(800%) hue-rotate(0deg) brightness(1.1) contrast(1.1);
+        }
+        /* Botão de Modo Tema */
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+            margin-left: 15px;
+            transition: color 0.3s;
+        }
+        .theme-toggle-btn:hover {
+            color: var(--blue-highlight);
+        }
+        .theme-toggle-btn img {
+            height: 24px;
+            width: 24px;
+            vertical-align: middle;
+        }
+        /* Estilos para o Gráfico de Preços Simulado */
+        .price-chart-simulated {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+        .price-chart-simulated p {
+            margin: 5px 0;
+            font-size: 13px;
+            color: var(--tertiary-text-color);
+        }
+        .price-chart-simulated strong {
+            color: var(--secondary-text-color);
+        }
+        /* Ícone de Favorito na Imagem */
+        .favorite-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            z-index: 5;
+            background-color: rgba(0, 0, 0, 0.4); /* Fundo semi-transparente para destaque */
+            border-radius: 50%;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        .favorite-icon:hover {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+        .favorite-icon img {
+            width: 24px; /* Tamanho do ícone de coração */
+            height: 24px;
+            filter: grayscale(100%) brightness(200%); /* Cor cinza por padrão para "não favoritado" */
+            transition: filter 0.2s;
+        }
+        .favorite-icon.favorited img {
+            filter: invert(10%) sepia(90%) saturate(6000%) hue-rotate(340deg) brightness(100%) contrast(100%); /* Cor vermelha para "favoritado" */
+        }
+        /* Estilos para o indicador LIVE */
+        .live-indicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #e74c3c; /* Vermelho vibrante */
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 5px;
+            animation: pulse 1.5s infinite; /* Animação de pulso */
+            z-index: 5;
+            box-shadow: 0 0 8px rgba(231, 76, 60, 0.7);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Estilos para as seções dentro do painel de admin */
+        .admin-section {
+            background-color: var(--card-bg);
+            margin-bottom: 25px; /* Espaçamento entre as seções */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Estilos para a sessão rolável horizontal */
+        .horizontal-scroll-section {
+            display: flex; /* Permite que os itens fiquem lado a lado */
+            overflow-x: auto; /* Habilita a rolagem horizontal */
+            -webkit-overflow-scrolling: touch; /* Melhor rolagem em dispositivos touch */
+            padding: 15px; /* Espaçamento interno */
+            gap: 15px; /* Espaçamento entre os itens */
+            border-radius: 8px;
+            background-color: var(--input-bg); /* Fundo sutil */
+            white-space: nowrap; /* Evita que os itens quebrem para a próxima linha */
+            scroll-snap-type: x mandatory; /* Ajuda a "encaixar" itens ao rolar */
+            scrollbar-width: thin; /* Para Firefox */
+            scrollbar-color: var(--blue-highlight) var(--input-bg);
+        }
+
+        .horizontal-scroll-section::-webkit-scrollbar {
+            height: 8px; /* Altura da barra de rolagem */
+        }
+
+        .horizontal-scroll-section::-webkit-scrollbar-track {
+            background: var(--input-focus-bg);
+            border-radius: 10px;
+        }
+
+        .horizontal-scroll-section::-webkit-scrollbar-thumb {
+            background-color: var(--blue-highlight);
+            border-radius: 10px;
+            border: 2px solid var(--input-focus-bg);
+        }
+
+        .horizontal-scroll-item {
+            flex: 0 0 auto; /* Não permite que os itens cresçam ou encolham */
+            width: 250px; /* Largura fixa para cada item */
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: inline-block; /* Necessário para scroll-snap-type */
+            scroll-snap-align: start; /* Alinha o início do item ao ponto de snap */
+        }
+
+        .horizontal-scroll-item img {
+            width: 100%;
+            height: 120px; /* Altura fixa para as imagens */
+            object-fit: cover; /* Garante que a imagem cubra o espaço */
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .horizontal-scroll-item h5 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            color: var(--text-color);
+        }
+        .horizontal-scroll-item p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--secondary-text-color);
+        }
+
+        /* Estilos para o ícone de fogo da aba Quentes */
+        .hot-icon {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 28px; /* Tamanho maior para destaque */
+            color: var(--hot-fire-color); /* Cor principal do fogo */
+            text-shadow: 0 0 5px var(--hot-glow-color), /* Brilho interno */
+                         0 0 10px var(--hot-glow-color), /* Brilho médio */
+                         0 0 15px var(--hot-glow-color); /* Brilho externo */
+            animation: fire-pulse 1.2s infinite alternate, /* Animação de pulso e brilho */
+                       fire-flicker 0.3s infinite; /* Animação de cintilação */
+            z-index: 5;
+            line-height: 1; /* Garante que o ícone fique bem posicionado */
+        }
+
+        /* Keyframes para a animação de pulso e brilho do fogo */
+        @keyframes fire-pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.9;
+                text-shadow: 0 0 5px var(--hot-glow-color);
+            }
+            100% {
+                transform: scale(1.1);
+                opacity: 1;
+                text-shadow: 0 0 8px var(--hot-glow-color), 0 0 16px var(--hot-glow-color), 0 0 24px var(--hot-glow-color);
+            }
+        }
+
+        /* Keyframes para a animação de cintilação do fogo */
+        @keyframes fire-flicker {
+            0%, 100% { opacity: 1; }
+            33% { opacity: 0.8; }
+            66% { opacity: 1; }
+        }
+
+        /* Estilos para o ícone de copiar */
+        .copy-icon {
+            width: 14px; /* Tamanho pequeno */
+            height: 14px;
+            margin-left: 8px; /* Espaçamento entre o texto e o ícone */
+            cursor: pointer;
+            filter: invert(70%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%); /* Cor cinza clara */
+            transition: filter 0.2s;
+        }
+
+        .copy-icon:hover {
+            filter: invert(50%) sepia(80%) saturate(2000%) hue-rotate(190deg) brightness(120%) contrast(120%); /* Cor azul ao passar o mouse */
+        }
+
+        /* Estilo para o ícone de engrenagens no título do Painel de Controle */
+        #painelAdmin h2 img {
+            height: 24px; /* Tamanho ajustado para ser consistente com outros títulos de seção */
+            width: 24px;
+            vertical-align: middle; /* Alinha o ícone verticalmente com o texto */
+            margin-right: 10px;
+        }
+
+        @media(max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><img src="https://cdn-icons-png.flaticon.com/512/3722/3722301.png" alt="Motorcycle Icon" class="icon-colored"> MarketSniper</div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Pesquisar produtos..." oninput="showSuggestions()" />
+            <div class="suggestions" id="suggestions" style="display: none;"></div>
+        </div>
+        <button class="theme-toggle-btn" onclick="toggleTheme()" id="themeToggleBtn">
+            <img src="https://cdn-icons-png.flaticon.com/512/861/861102.png" alt="Moon Icon">
+        </button>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu(this)">
+            <div></div><div></div><div></div>
+        </div>
+    </header>
+    <div class="menu" id="menu">
+        </div>
+    <div class="menu" id="adminMenu">
+        </div>
+
+    <div class="section-title" id="monitoramento" style="display:none;"> Monitoramento ao Vivo</div>
+    <div class="container" id="monitoramentoContainer"></div>
+
+    <div class="section-title" id="produtos-mais-vendidos-title"><img src="https://cdn-icons-png.flaticon.com/512/1531/1531776.png" alt="Chart Line Icon"> Produtos Mais Vendidos</div>
+    <div class="container" id="produtosContainer"></div>
+
+    <div class="menu" id="painelAdmin" style="display: none; padding: 25px; background: var(--menu-bg); margin: 25px;">
+        <h2 style="color: var(--blue-highlight);"><img src="https://cdn-icons-png.flaticon.com/512/481/481971.png" alt="Cogs Icon"> Painel de Controle</h2>
+        
+        <div class="admin-section">
+            <h3><img src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" alt="Add Icon"> Adicionar Novo Produto</h3>
+            <input type="text" id="produtoNome" placeholder="Nome do Produto" style="width: 100%; margin-bottom: 8px;" />
+            <input type="text" id="produtoPreco" placeholder="Preço (ex: 199.90)" style="width: 100%; margin-bottom: 8px;" />
+            <input type="text" id="produtoImagem" placeholder="Link da Imagem" style="width: 100%; margin-bottom: 8px;" />
+            <textarea id="produtoDescricao" placeholder="Descrição do Produto" rows="3" style="width: 100%; margin-bottom: 8px; border-radius: 6px; padding: 8px; background-color: var(--input-bg); color: var(--text-color);"></textarea>
+            <h4><img src="https://cdn-icons-png.flaticon.com/512/1828/1828818.png" alt="Chart Bar Icon"> Preços em Marketplaces (digite nome e valor, escolha status da seta)</h4>
+            <div id="marketplacesInputs"></div>
+            <button class="btn btn-purple" onclick="adicionarMarketplaceInput()">+ Adicionar Marketplace</button>
+            <h4 style="margin-top: 15px;"><img src="https://cdn-icons-png.flaticon.com/512/1828/1828816.png" alt="Tags Icon"> Adicionar a Abas:</h4>
+            <div id="abasProdutoInputs" style="margin-bottom: 15px;"></div>
+            <button onclick="adicionarProduto()" class="btn btn-green" style="margin-top: 15px;">Adicionar Produto</button>
+        </div>
+
+        <div class="admin-section">
+            <h3><img src="https://cdn-icons-png.flaticon.com/512/1828/1828819.png" alt="Folder Add Icon"> Criar Nova Aba no Menu</h3>
+            <input type="text" id="nomeAba" placeholder="Nome da nova aba" style="width: 100%; margin-bottom: 8px; background-color: var(--input-bg); color: var(--text-color);" />
+            <button onclick="criarNovaAba()" class="btn btn-purple">Adicionar Aba</button>
+        </div>
+
+        <div class="admin-section">
+            <h3><img src="https://cdn-icons-png.flaticon.com/512/1828/1828820.png" alt="Chart Pie Icon"> Destaques</h3>
+            <div style="background:var(--input-bg); border-radius:8px; padding:15px;">
+                <p><img src="https://cdn-icons-png.flaticon.com/512/1828/1828821.png" alt="Users Icon"> Acessos simulados hoje: <strong id="acessosHojeValue">0</strong></p>
+                <p><img src="https://cdn-icons-png.flaticon.com/512/1828/1828822.png" alt="Box Icon"> Produtos monitorados: <strong id="totalMonitoradosValue">0</strong></p>
+                <p><img src="https://cdn-icons-png.flaticon.com/512/1828/1828823.png" alt="Online User Icon"> Usuários online (local): <strong id="usuariosOnlineValue">1</strong></p>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <h3><img src="https://cdn-icons-png.flaticon.com/512/1828/1828824.png" alt="Tasks Icon"> Próximas Tarefas</h3>
+            <div class="horizontal-scroll-section" id="adminTasksSection">
+                <div class="horizontal-scroll-item">
+                    <img src="https://via.placeholder.com/250x120/FF5733/FFFFFF?text=Tarefa+1" alt="Tarefa 1">
+                    <h5>Revisar Preços</h5>
+                    <p>Verificar preços dos 10 produtos mais vendidos.</p>
+                </div>
+                <div class="horizontal-scroll-item">
+                    <img src="https://via.placeholder.com/250x120/33FF57/FFFFFF?text=Tarefa+2" alt="Tarefa 2">
+                    <h5>Atualizar Estoque</h5>
+                    <p>Conferir níveis de estoque e reabastecer.</p>
+                </div>
+                <div class="horizontal-scroll-item">
+                    <img src="https://via.placeholder.com/250x120/3366FF/FFFFFF?text=Tarefa+3" alt="Tarefa 3">
+                    <h5>Análise de Feedback</h5>
+                    <p>Analisar feedback dos clientes da última semana.</p>
+                </div>
+                <div class="horizontal-scroll-item">
+                    <img src="https://via.placeholder.com/250x120/FFFF33/333333?text=Tarefa+4" alt="Tarefa 4">
+                    <h5>Campanha de Marketing</h5>
+                    <p>Planejar nova campanha de verão.</p>
+                </div>
+                <div class="horizontal-scroll-item">
+                    <img src="https://via.placeholder.com/250x120/FF33CC/FFFFFF?text=Tarefa+5" alt="Tarefa 5">
+                    <h5>Relatório Mensal</h5>
+                    <p>Compilar relatório de vendas de julho.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <h3><img src="https://cdn-icons-png.flaticon.com/512/3233/3233513.png" alt="Top Market Icon"> Top dos Marketplaces</h3>
+            <div class="horizontal-scroll-section" id="topMarketplacesSection">
+                <div class="horizontal-scroll-item">
+                    <img src="https://via.placeholder.com/250x120/4CAF50/FFFFFF?text=Marketplace+A" alt="Marketplace A">
+                    <h5>Marketplace A</h5>
+                    <p>Mais vendas este mês.</p>
+                </div>
+                <div class="horizontal-scroll-item">
+                    <img src="https://via.placeholder.com/250x120/2196F3/FFFFFF?text=Marketplace+B" alt="Marketplace B">
+                    <h5>Marketplace B</h5>
+                    <p>Maior crescimento em 30 dias.</p>
+                </div>
+                <div class="horizontal-scroll-item">
+                    <img src="https://via.placeholder.com/250x120/FFC107/333333?text=Marketplace+C" alt="Marketplace C">
+                    <h5>Marketplace C</h5>
+                    <p>Melhor feedback de clientes.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- URLs dos Ícones ---
+        const ICON_URLS = {
+            motorcycle: 'https://cdn-icons-png.flaticon.com/512/3722/3722301.png', // Ícone de moto
+            products: 'https://cdn-icons-png.flaticon.com/512/1057/1057106.png',
+            monitor: 'https://cdn-icons-png.flaticon.com/512/2903/2903009.png', // Este é o ícone da "gota com mira"
+            admin: 'https://cdn-icons-png.flaticon.com/512/1055/1055672.png',
+            chart_line: 'https://cdn-icons-png.flaticon.com/512/1531/1531776.png',
+            cogs: 'https://cdn-icons-png.flaticon.com/512/481/481971.png', // Ícone de engrenagens (cogs)
+            add: 'https://cdn-icons-png.flaticon.com/512/1828/1828817.png',
+            chart_bar: 'https://cdn-icons-png.flaticon.com/512/1828/1828818.png',
+            tags: 'https://cdn-icons-png.flaticon.com/512/1828/1828816.png',
+            folder_add: 'https://cdn-icons-png.flaticon.com/512/1828/1828819.png',
+            chart_pie: 'https://cdn-icons-png.flaticon.com/512/1828/1828820.png',
+            users: 'https://cdn-icons-png.flaticon.com/512/1828/1828821.png',
+            box: 'https://cdn-icons-png.flaticon.com/512/1828/1828822.png',
+            online_user: 'https://cdn-icons-png.flaticon.com/512/1828/1828823.png',
+            tasks: 'https://cdn-icons-png.flaticon.com/512/1828/1828824.png',
+            trash: 'https://cdn-icons-png.flaticon.com/512/1828/1828825.png',
+            moon: 'https://cdn-icons-png.flaticon.com/512/861/861102.png',
+            sun: 'https://cdn-icons-png.flaticon.com/512/1023/1023668.png',
+            heart: 'https://cdn-icons-png.flaticon.com/512/1077/1077035.png',
+            price_alert: 'https://cdn-icons-png.flaticon.com/512/2838/2838912.png',
+            arrow_up: 'https://cdn-icons-png.flaticon.com/512/2985/2985160.png',
+            arrow_straight: 'https://cdn-icons-png.flaticon.com/512/2985/2985161.png',
+            arrow_down: 'https://cdn-icons-png.flaticon.com/512/2985/2985162.png',
+            top_market: 'https://cdn-icons-png.flaticon.com/512/3233/3233513.png',
+            fire: 'https://cdn-icons-png.flaticon.com/512/1850/1850780.png', // Ícone de fogo
+            copy: 'https://cdn-icons-png.flaticon.com/512/60/60990.png', // Ícone de copiar
+        };
+        // ------------------------------------------------------------------
+
+        const ADMIN_EMAIL = "admin@site.com";
+        let currentUser = localStorage.getItem("userEmail");
+        let isAdmin = false;
+
+        // Simulação de autenticação
+        if (!currentUser) {
+            currentUser = prompt("Digite seu e-mail para continuar (ex: user@example.com ou admin@site.com para Admin):");
+            if (!currentUser) {
+                currentUser = "guest@example.com";
+            }
+            localStorage.setItem("userEmail", currentUser);
+        }
+        isAdmin = currentUser === ADMIN_EMAIL;
+
+        let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+        // Certifique-se de que "Quentes" esteja sempre presente no menuTabs
+        let menuTabs = JSON.parse(localStorage.getItem("menuTabs")) || [];
+        if (!menuTabs.includes("Quentes")) {
+            menuTabs.push("Quentes");
+            localStorage.setItem("menuTabs", JSON.stringify(menuTabs));
+        }
+
+        let marketplacesTemp = [];
+        let favoritos = JSON.parse(localStorage.getItem(`favoritos_${currentUser}`)) || [];
+        let monitoredProducts = JSON.parse(localStorage.getItem(`monitorados_${currentUser}`)) || [];
+
+
+        // --- Gerenciamento de Tema ---
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggleBtn = document.getElementById('themeToggleBtn');
+            if (body.classList.contains('light-mode')) {
+                body.classList.remove('light-mode');
+                themeToggleBtn.innerHTML = `<img src="${ICON_URLS.moon}" alt="Moon Icon">`;
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.add('light-mode');
+                themeToggleBtn.innerHTML = `<img src="${ICON_URLS.sun}" alt="Sun Icon">`;
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        function applySavedTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const body = document.body;
+            const themeToggleBtn = document.getElementById('themeToggleBtn');
+            if (savedTheme === 'light') {
+                body.classList.add('light-mode');
+                themeToggleBtn.innerHTML = `<img src="${ICON_URLS.sun}" alt="Sun Icon">`;
+            } else {
+                body.classList.remove('light-mode');
+                themeToggleBtn.innerHTML = `<img src="${ICON_URLS.moon}" alt="Moon Icon">`;
+            }
+        }
+        // --- Fim Gerenciamento de Tema ---
+
+        // Function to render menu tabs
+        function renderMenuTabs() {
+            const menu = document.getElementById("menu");
+            const adminMenu = document.getElementById("adminMenu");
+
+            // Limpa as abas existentes dinâmicas
+            menu.innerHTML = '';
+            adminMenu.innerHTML = '';
+
+            // Adiciona "Todos os Produtos"
+            let allProductsLink = document.createElement("a");
+            allProductsLink.href = "#";
+            allProductsLink.innerHTML = `<img src="${ICON_URLS.products}" alt="Products Icon" class="icon-colored"> Todos os Produtos`;
+            allProductsLink.onclick = (e) => {
+                e.preventDefault();
+                mostrarProdutos(); // Alterado para chamar mostrarProdutos sem filtro de aba
+                document.getElementById("produtos-mais-vendidos-title").innerHTML = `<img src="${ICON_URLS.chart_line}" alt="Chart Line Icon"> Produtos Mais Vendidos`;
+                toggleMenu(document.getElementById("hamburger")); // Fecha o menu hambúrguer após o clique
+            };
+            menu.appendChild(allProductsLink);
+
+            // Adiciona "Monitoramento ao Vivo"
+            let monitoramentoLink = document.createElement("a");
+            monitoramentoLink.href = "#monitoramento";
+            monitoramentoLink.id = "monitoramentoMenuItem";
+            monitoramentoLink.innerHTML = `<img src="${ICON_URLS.monitor}" alt="Monitor Icon" class="icon-colored"> Monitoramento ao Vivo`;
+            monitoramentoLink.onclick = (e) => {
+                e.preventDefault();
+                mostrarMonitoramento();
+                toggleMenu(document.getElementById("hamburger")); // Fecha o menu hambúrguer após o clique
+            };
+            menu.appendChild(monitoramentoLink);
+
+            // Adiciona "Painel de Controle" ou "Lista de Desejos"
+            if (isAdmin) {
+                let adminPanelLink = document.createElement("a");
+                adminPanelLink.href = "#painel";
+                adminPanelLink.innerHTML = `<img src="${ICON_URLS.admin}" alt="Admin Icon" class="icon-colored"> Painel de Controle`;
+                adminPanelLink.onclick = (e) => {
+                    e.preventDefault();
+                    mostrarPainelAdmin();
+                    toggleMenu(document.getElementById("hamburger")); // Fecha o menu hambúrguer após o clique
+                };
+                adminMenu.appendChild(adminPanelLink);
+                adminMenu.style.display = "block"; // Garante que o menu admin seja visível
+            } else {
+                adminMenu.style.display = "none"; // Garante que o menu admin seja invisível
+                let wishlistLink = document.createElement("a");
+                wishlistLink.href = "#lista-de-desejos";
+                wishlistLink.id = "wishlistMenuItem";
+                wishlistLink.innerHTML = `<img src="${ICON_URLS.heart}" alt="Heart Icon" class="icon-colored"> Lista de Desejos`;
+                wishlistLink.onclick = (e) => {
+                    e.preventDefault();
+                    mostrarListaDesejos();
+                    toggleMenu(document.getElementById("hamburger")); // Fecha o menu hambúrguer após o clique
+                };
+                menu.appendChild(wishlistLink);
+            }
+            
+            // Adiciona abas personalizadas ao menu principal
+            menuTabs.forEach(tabName => {
+                const novaAba = document.createElement("a");
+                novaAba.href = "#" + tabName.toLowerCase().replace(/ /g, "-");
+                // Condicional para o ícone de fogo na aba "Quentes"
+                if (tabName === "Quentes") {
+                    novaAba.innerHTML = `<img src="${ICON_URLS.fire}" alt="Fire Icon" style="filter: brightness(0) saturate(100%) invert(43%) sepia(99%) saturate(709%) hue-rotate(358deg) brightness(108%) contrast(100%);"> ${tabName}`;
+                    novaAba.onclick = (e) => {
+                        e.preventDefault();
+                        mostrarProdutosQuentes();
+                        toggleMenu(document.getElementById("hamburger"));
+                    };
+                } else {
+                    novaAba.innerHTML = `<img src="${ICON_URLS.folder_add}" alt="Folder Icon" class="icon-colored"> ${tabName}`;
+                    novaAba.onclick = (e) => {
+                        e.preventDefault();
+                        mostrarProdutos(tabName);
+                        document.getElementById("produtos-mais-vendidos-title").innerHTML = `<img src="${ICON_URLS.chart_line}" alt="Chart Line Icon"> Produtos em "${tabName}"`;
+                        toggleMenu(document.getElementById("hamburger")); // Fecha o menu hambúrguer após o clique
+                    };
+                }
+                menu.appendChild(novaAba);
+            });
+        }
+
+        function updateAbasProdutoInputs() {
+            const abasContainer = document.getElementById("abasProdutoInputs");
+            abasContainer.innerHTML = '';
+
+            const defaultCheckboxDiv = document.createElement("div");
+            defaultCheckboxDiv.innerHTML = `
+                <input type="checkbox" id="tab-TodosOsProdutos" name="produtoTabs" value="Todos os Produtos" checked disabled>
+                <label for="tab-TodosOsProdutos">Todos os Produtos (Padrão)</label>
+            `;
+            abasContainer.appendChild(defaultCheckboxDiv);
+
+            menuTabs.forEach(tabName => {
+                const checkboxDiv = document.createElement("div");
+                checkboxDiv.innerHTML = `
+                    <input type="checkbox" id="tab-${tabName.replace(/\s/g, '')}" name="produtoTabs" value="${tabName}">
+                    <label for="tab-${tabName.replace(/\s/g, '')}">${tabName}</label>
+                `;
+                abasContainer.appendChild(checkboxDiv);
+            });
+        }
+
+        // Função auxiliar para copiar texto
+        function copyToClipboard(text, element) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalFilter = element.style.filter;
+                const originalMargin = element.style.marginLeft;
+                element.style.filter = 'invert(50%) sepia(80%) saturate(2000%) hue-rotate(190deg) brightness(120%) contrast(120%)';
+                element.style.marginLeft = '12px'; // Adiciona um pequeno movimento
+                setTimeout(() => {
+                    element.style.filter = originalFilter;
+                    element.style.marginLeft = originalMargin;
+                }, 300);
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+            });
+        }
+
+        function mostrarProdutos(filterTab = null) {
+            const container = document.getElementById("produtosContainer");
+            container.innerHTML = "";
+            document.getElementById("monitoramentoContainer").style.display = "none";
+            document.getElementById("monitoramento").style.display = "none";
+            document.getElementById("painelAdmin").style.display = "none"; // Garante que o painel admin esteja escondido
+            document.getElementById("produtos-mais-vendidos-title").style.display = "flex";
+
+            let productsToDisplay = produtos;
+
+            if (filterTab) {
+                productsToDisplay = produtos.filter(produto => produto.tabs && produto.tabs.includes(filterTab));
+            }
+
+            if (filterTab && productsToDisplay.length === 0) {
+                container.innerHTML = `<p style="text-align: center; width: 100%; color: var(--tertiary-text-color);">Nenhum produto encontrado na aba "${filterTab}".</p>`;
+                return;
+            } else if (!filterTab && document.getElementById("produtos-mais-vendidos-title").innerHTML !== `<img src="${ICON_URLS.chart_line}" alt="Chart Line Icon"> Produtos Mais Vendidos`) {
+                document.getElementById("produtos-mais-vendidos-title").innerHTML = `<img src="${ICON_URLS.chart_line}" alt="Chart Line Icon"> Produtos Mais Vendidos`;
+            }
+
+            productsToDisplay.forEach((produto, i) => {
+                const card = document.createElement("div");
+                card.className = "card";
+
+                const removeButtonHTML = isAdmin ?
+                    `<button class="btn btn-red" onclick="removerProduto('${produto.id}')">Remover</button>` : // Passa o ID do produto
+                    '';
+
+                // Ícone de favorito na imagem
+                const isFavorito = favoritos.some(fav => fav.id === produto.id);
+                const favoriteIconHTML = !isAdmin ?
+                    `<div class="favorite-icon ${isFavorito ? 'favorited' : ''}" onclick="toggleFavorito('${produto.id}')">
+                        <img src="${ICON_URLS.heart}" alt="Favorite Icon">
+                    </div>` : '';
+                
+                // Indicador LIVE - só aparece se não for admin E estiver sendo monitorado
+                const isMonitored = monitoredProducts.some(monitoredProd => monitoredProd.id === produto.id);
+                const liveIndicatorHTML = !isAdmin && isMonitored ? `<div class="live-indicator">LIVE</div>` : '';
+
+                // Ícone de Fogo para produtos da aba "Quentes" (se o admin marcou)
+                const hotIconHTML = produto.tabs && produto.tabs.includes("Quentes") ?
+                    `<span class="hot-icon">🔥</span>` : '';
+
+
+                card.innerHTML = `
+                    <div style="position: relative;">
+                        <img src="${produto.imagem}" alt="${produto.nome}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+                        ${favoriteIconHTML}
+                        ${liveIndicatorHTML}
+                        ${hotIconHTML}
+                    </div>
+                    <h3>${produto.nome}<img src="${ICON_URLS.copy}" class="copy-icon" onclick="copyToClipboard('${produto.nome}', this)" title="Copiar Título"></h3>
+                    <div class="price">Preço atual: R$${produto.preco}<img src="${ICON_URLS.copy}" class="copy-icon" onclick="copyToClipboard('R$${produto.preco}', this)" title="Copiar Preço"></div>
+                    <div class="buttons">
+                        <button class="btn btn-green" onclick="alert('Comprar: ${produto.nome}')">Comprar</button>
+                        <button class="btn btn-purple" onclick="toggleDetalhes(this, '${produto.id}')">Detalhes</button>
+                        <button class="btn btn-orange" onclick="monitorarProduto('${produto.id}')">Monitorar</button>
+                        ${removeButtonHTML}
+                    </div>
+                    <div class="detalhes-container"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- Nova Função para Mostrar Produtos Quentes ---
+        function mostrarProdutosQuentes() {
+            const container = document.getElementById("produtosContainer");
+            container.innerHTML = "";
+            document.getElementById("monitoramentoContainer").style.display = "none";
+            document.getElementById("monitoramento").style.display = "none";
+            document.getElementById("painelAdmin").style.display = "none";
+            document.getElementById("produtos-mais-vendidos-title").style.display = "flex";
+            document.getElementById("produtos-mais-vendidos-title").innerHTML = `<img src="${ICON_URLS.fire}" alt="Fire Icon" style="filter: brightness(0) saturate(100%) invert(43%) sepia(99%) saturate(709%) hue-rotate(358deg) brightness(108%) contrast(100%); margin-right: 10px;"> Produtos Quentes`;
+
+            let hotProducts = produtos.filter(produto => produto.tabs && produto.tabs.includes("Quentes"));
+
+            if (hotProducts.length === 0) {
+                container.innerHTML = `<p style="text-align: center; width: 100%; color: var(--tertiary-text-color);">Nenhum produto marcado como "Quente" ainda.</p>`;
+                return;
+            }
+
+            hotProducts.forEach((produto, i) => {
+                const card = document.createElement("div");
+                card.className = "card";
+
+                const removeButtonHTML = isAdmin ?
+                    `<button class="btn btn-red" onclick="removerProduto('${produto.id}')">Remover</button>` :
+                    '';
+
+                const isFavorito = favoritos.some(fav => fav.id === produto.id);
+                const favoriteIconHTML = !isAdmin ?
+                    `<div class="favorite-icon ${isFavorito ? 'favorited' : ''}" onclick="toggleFavorito('${produto.id}')">
+                        <img src="${ICON_URLS.heart}" alt="Favorite Icon">
+                    </div>` : '';
+                
+                const isMonitored = monitoredProducts.some(monitoredProd => monitoredProd.id === produto.id);
+                const liveIndicatorHTML = !isAdmin && isMonitored ? `<div class="live-indicator">LIVE</div>` : '';
+
+                // Ícone de Fogo visível apenas na aba "Quentes" ou se a propriedade estiver setada
+                const hotIconHTML = `<span class="hot-icon">🔥</span>`;
+
+                card.innerHTML = `
+                    <div style="position: relative;">
+                        <img src="${produto.imagem}" alt="${produto.nome}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+                        ${favoriteIconHTML}
+                        ${liveIndicatorHTML}
+                        ${hotIconHTML}
+                    </div>
+                    <h3>${produto.nome}<img src="${ICON_URLS.copy}" class="copy-icon" onclick="copyToClipboard('${produto.nome}', this)" title="Copiar Título"></h3>
+                    <div class="price">Preço atual: R$${produto.preco}<img src="${ICON_URLS.copy}" class="copy-icon" onclick="copyToClipboard('R$${produto.preco}', this)" title="Copiar Preço"></div>
+                    <div class="buttons">
+                        <button class="btn btn-green" onclick="alert('Comprar: ${produto.nome}')">Comprar</button>
+                        <button class="btn btn-purple" onclick="toggleDetalhes(this, '${produto.id}')">Detalhes</button>
+                        <button class="btn btn-orange" onclick="monitorarProduto('${produto.id}')">Monitorar</button>
+                        ${removeButtonHTML}
+                    </div>
+                    <div class="detalhes-container"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        // --- Fim Nova Função para Mostrar Produtos Quentes ---
+
+        // Função para mostrar o Painel Admin
+        function mostrarPainelAdmin() {
+            document.getElementById("painelAdmin").style.display = "block";
+            document.getElementById("produtosContainer").innerHTML = ""; // Limpa a área de produtos
+            document.getElementById("monitoramentoContainer").style.display = "none"; // Esconde monitoramento
+            document.getElementById("monitoramento").style.display = "none"; // Esconde título de monitoramento
+            document.getElementById("produtos-mais-vendidos-title").style.display = "none"; // Esconde o título de produtos mais vendidos
+            updateAbasProdutoInputs(); // Atualiza as abas para adicionar produto
+            // Atualiza os contadores no Painel Admin
+            document.getElementById("acessosHojeValue").textContent = Math.floor(Math.random() * 300 + 100);
+            document.getElementById("totalMonitoradosValue").textContent = (JSON.parse(localStorage.getItem(`monitorados_${currentUser}`)) || []).length;
+            document.getElementById("usuariosOnlineValue").textContent = Math.floor(Math.random() * 5 + 1);
+        }
+
+        function adicionarProduto() {
+            const nome = document.getElementById("produtoNome").value.trim();
+            const precoRaw = document.getElementById("produtoPreco").value.trim();
+            const imagem = document.getElementById("produtoImagem").value.trim();
+            const descricao = document.getElementById("produtoDescricao").value.trim();
+
+            if (!nome || !precoRaw || !imagem) {
+                alert("Preencha pelo menos Nome, Preço e Imagem!");
+                return;
+            }
+
+            // Converte vírgula para ponto e depois para float
+            const preco = parseFloat(precoRaw.replace(",", "."));
+
+            if (isNaN(preco) || preco <= 0) {
+                alert("Preço inválido! Digite um número positivo.");
+                return;
+            }
+
+            let selectedTabs = Array.from(document.querySelectorAll('input[name="produtoTabs"]:checked'))
+                                     .map(checkbox => checkbox.value);
+            if (!selectedTabs.includes("Todos os Produtos")) {
+                selectedTabs.unshift("Todos os Produtos");
+            }
+            
+            const newProductId = Date.now().toString();
+            const currentPrice = preco;
+            const produto = {
+                id: newProductId,
+                nome,
+                preco: currentPrice.toFixed(2),
+                imagem,
+                descricao,
+                marketplaces: marketplacesTemp.slice(), // Clona para não ter referência
+                tabs: selectedTabs,
+                historicoPrecos: [
+                    { date: new Date().toISOString().slice(0, 10), price: (currentPrice * (1 + (Math.random() - 0.5) * 0.1)).toFixed(2) },
+                    { date: new Date(Date.now() - 86400000 * 2).toISOString().slice(0, 10), price: (currentPrice * (1 + (Math.random() - 0.5) * 0.1)).toFixed(2) },
+                    { date: new Date(Date.now() - 86400000 * 5).toISOString().slice(0, 10), price: (currentPrice * (1 + (Math.random() - 0.5) * 0.1)).toFixed(2) },
+                    { date: new Date(Date.now() - 86400000 * 7).toISOString().slice(0, 10), price: (currentPrice * (1 + (Math.random() - 0.5) * 0.1)).toFixed(2) }
+                ].sort((a,b) => new Date(a.date) - new Date(b.date))
+            };
+            // Adiciona o preço atual como o mais recente no histórico
+            produto.historicoPrecos.push({ date: new Date().toISOString().slice(0, 10), price: currentPrice.toFixed(2) });
+            // Mantém apenas os últimos 4 registros de histórico para simplicidade
+            if (produto.historicoPrecos.length > 4) {
+                produto.historicoPrecos = produto.historicoPrecos.slice(-4);
+            }
+
+            produtos.push(produto);
+            localStorage.setItem("produtos", JSON.stringify(produtos));
+
+            // Limpa os campos do formulário
+            document.getElementById("produtoNome").value = "";
+            document.getElementById("produtoPreco").value = "";
+            document.getElementById("produtoImagem").value = "";
+            document.getElementById("produtoDescricao").value = "";
+            marketplacesTemp = [];
+            document.getElementById("marketplacesInputs").innerHTML = "";
+            document.querySelectorAll('input[name="produtoTabs"]:not([disabled]):checked').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            alert(`Produto adicionado com sucesso!`);
+            mostrarProdutos(); // Atualiza a lista de produtos
+        }
+
+        function removerProduto(produtoId) {
+            if (confirm("Tem certeza que deseja remover este produto?")) {
+                const produtoRemovido = produtos.find(p => p.id === produtoId);
+                if (!produtoRemovido) return;
+
+                produtos = produtos.filter(p => p.id !== produtoId);
+                localStorage.setItem("produtos", JSON.stringify(produtos));
+
+                // Remover o produto de todos os favoritos dos usuários
+                const allUsers = Object.keys(localStorage).filter(key => key.startsWith('favoritos_'));
+                allUsers.forEach(userKey => {
+                    let userFavs = JSON.parse(localStorage.getItem(userKey)) || [];
+                    userFavs = userFavs.filter(fav => fav.id !== produtoRemovido.id);
+                    localStorage.setItem(userKey, JSON.stringify(userFavs));
+                });
+                // Atualiza a lista de favoritos do usuário atual também
+                favoritos = favoritos.filter(fav => fav.id !== produtoRemovido.id);
+
+                // Remover o produto de todos os monitorados dos usuários
+                const allMonitoredUsers = Object.keys(localStorage).filter(key => key.startsWith('monitorados_'));
+                allMonitoredUsers.forEach(userKey => {
+                    let userMonitored = JSON.parse(localStorage.getItem(userKey)) || [];
+                    userMonitored = userMonitored.filter(monitored => monitored.id !== produtoRemovido.id);
+                    localStorage.setItem(userKey, JSON.stringify(userMonitored));
+                });
+                // Atualiza a lista de monitorados do usuário atual também
+                monitoredProducts = monitoredProducts.filter(monitoredProd => monitoredProd.id !== produtoRemovido.id);
+
+                // Tenta re-renderizar a aba atual para refletir a remoção
+                const titleElement = document.getElementById("produtos-mais-vendidos-title");
+                if (titleElement.textContent.includes("Produtos Quentes")) {
+                    mostrarProdutosQuentes();
+                } else if (titleElement.textContent.includes("Minha Lista de Desejos")) {
+                    mostrarListaDesejos();
+                } else if (titleElement.textContent.includes("Monitoramento ao Vivo")) {
+                    mostrarMonitoramento();
+                } else {
+                    let currentTabFilter = null;
+                    if (titleElement.textContent.includes("Produtos em \"")) {
+                        currentTabFilter = titleElement.textContent.split('"')[1];
+                    }
+                    mostrarProdutos(currentTabFilter);
+                }
+                alert(`Produto removido com sucesso!`);
+            }
+        }
+
+        function adicionarMarketplaceInput() {
+            const container = document.getElementById("marketplacesInputs");
+            const index = container.children.length; // Usa o número de filhos como índice
+            const div = document.createElement("div");
+            div.style.marginBottom = "10px";
+            div.innerHTML = `
+                <input type="text" placeholder="Nome da Marketplace" style="width:40%; margin-right:8px; background-color: var(--input-bg); color: var(--text-color);" id="mpNome${index}" />
+                <input type="text" placeholder="Preço (ex: 150.90)" style="width:30%; margin-right:8px; background-color: var(--input-bg); color: var(--text-color);" id="mpPreco${index}" />
+                <select id="mpStatus${index}" style="width:20%; background-color: var(--input-bg); color: var(--text-color);">
+                    <option value="up">Subiu</option>
+                    <option value="straight" selected>Estável</option>
+                    <option value="down">Caiu</option>
+                </select>
+                <button onclick="removerMarketplaceInput(this)" style="width:8%; background:var(--btn-orange); color:#fff; border:none; border-radius:4px; cursor:pointer;">×</button>
+            `;
+            container.appendChild(div);
+            // Adiciona event listeners para coletar dados automaticamente
+            div.querySelectorAll('input, select').forEach(input => {
+                input.addEventListener('input', coletarMarketplaces);
+                input.addEventListener('change', coletarMarketplaces);
+            });
+            coletarMarketplaces(); // Coleta os dados após adicionar um novo input
+        }
+
+        function removerMarketplaceInput(botao) {
+            botao.parentElement.remove();
+            coletarMarketplaces(); // Recoleta os dados após remover um input
+        }
+
+        function coletarMarketplaces() {
+            marketplacesTemp = [];
+            const container = document.getElementById("marketplacesInputs");
+            for (let i = 0; i < container.children.length; i++) {
+                const div = container.children[i];
+                const nome = div.querySelector(`#mpNome${i}`)?.value.trim();
+                const precoRaw = div.querySelector(`#mpPreco${i}`)?.value.trim();
+                const status = div.querySelector(`#mpStatus${i}`)?.value;
+                if (nome && precoRaw && status) {
+                    const preco = parseFloat(precoRaw.replace(",", "."));
+                    if (!isNaN(preco)) {
+                         marketplacesTemp.push({ nome, preco: preco.toFixed(2), status });
+                    }
+                }
+            }
+        }
+
+        function criarNovaAba() {
+            const nome = document.getElementById("nomeAba").value.trim();
+            if (!nome) {
+                alert("Digite o nome da aba.");
+                return;
+            }
+            if (menuTabs.includes(nome)) {
+                alert("Essa aba já existe!");
+                return;
+            }
+            menuTabs.push(nome);
+            localStorage.setItem("menuTabs", JSON.stringify(menuTabs));
+            renderMenuTabs();
+            updateAbasProdutoInputs();
+            alert(`Aba adicionada ao menu!`);
+            document.getElementById("nomeAba").value = "";
+        }
+
+        function mostrarMonitoramento() {
+            const container = document.getElementById("monitoramentoContainer");
+            container.innerHTML = "";
+            document.getElementById("produtosContainer").innerHTML = "";
+            document.getElementById("painelAdmin").style.display = "none"; // Garante que o painel admin esteja escondido
+            document.getElementById("produtos-mais-vendidos-title").style.display = "none";
+
+            document.getElementById("monitoramento").style.display = "flex";
+            let monitoredProducts = JSON.parse(localStorage.getItem(`monitorados_${currentUser}`)) || [];
+
+            if (monitoredProducts.length === 0) {
+                container.innerHTML = `<p style="text-align: center; width: 100%; color: var(--tertiary-text-color);">Você não está monitorando nenhum produto.</p>`;
+                return;
+            }
+            monitoredProducts.forEach((monitoredProd, i) => {
+                const produtoOriginal = produtos.find(p => p.id === monitoredProd.id);
+                if (!produtoOriginal) return;
+
+                const card = document.createElement("div");
+                card.className = "card";
+
+                const isFavorito = favoritos.some(fav => fav.id === produtoOriginal.id);
+                const favoriteIconHTML = !isAdmin ?
+                    `<div class="favorite-icon ${isFavorito ? 'favorited' : ''}" onclick="toggleFavorito('${produtoOriginal.id}')">
+                        <img src="${ICON_URLS.heart}" alt="Favorite Icon">
+                    </div>` : '';
+                
+                // Indicador LIVE para produtos monitorados nesta tela (sempre LIVE)
+                const liveIndicatorHTML = `<div class="live-indicator">LIVE</div>`;
+
+                // Ícone de Fogo para produtos da aba "Quentes" (se o admin marcou)
+                const hotIconHTML = produtoOriginal.tabs && produtoOriginal.tabs.includes("Quentes") ?
+                    `<span class="hot-icon">🔥</span>` : '';
+
+                card.innerHTML = `
+                    <div style="position: relative;">
+                        <img src="${produtoOriginal.imagem}" alt="${produtoOriginal.nome}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+                        ${favoriteIconHTML}
+                        ${liveIndicatorHTML}
+                        ${hotIconHTML}
+                    </div>
+                    <h3>${produtoOriginal.nome}<img src="${ICON_URLS.copy}" class="copy-icon" onclick="copyToClipboard('${produtoOriginal.nome}', this)" title="Copiar Título"></h3>
+                    <div class="price">Preço atual: R$${produtoOriginal.preco}<img src="${ICON_URLS.copy}" class="copy-icon" onclick="copyToClipboard('R$${produtoOriginal.preco}', this)" title="Copiar Preço"></div>
+                    <div class="buttons">
+                        <button class="btn btn-purple" onclick="toggleDetalhes(this, '${produtoOriginal.id}')">Detalhes</button>
+                        <button class="btn btn-orange" onclick="removerMonitoramento('${monitoredProd.id}')">Parar Monitoramento</button>
+                    </div>
+                    <div class="detalhes-container"></div>
+                `;
+                container.appendChild(card);
+            });
+            container.style.display = "flex";
+            atualizarMonitoramentoContador();
+        }
+
+        function monitorarProduto(produtoId) {
+            const produto = produtos.find(p => p.id === produtoId);
+            if (!produto) return;
+
+            let monitoredProducts = JSON.parse(localStorage.getItem(`monitorados_${currentUser}`)) || [];
+
+            const jaMonitorado = monitoredProducts.some(monitoredProd => monitoredProd.id === produto.id);
+            if (jaMonitorado) {
+                alert("Produto já está sendo monitorado.");
+                return;
+            }
+            monitoredProducts.push({ id: produto.id, dataInicio: new Date().toISOString().slice(0, 10) });
+            localStorage.setItem(`monitorados_${currentUser}`, JSON.stringify(monitoredProducts));
+            alert(`"${produto.nome}" adicionado ao monitoramento!`);
+            atualizarMonitoramentoContador();
+            // Re-renderiza a tela atual para mostrar o indicador LIVE
+            const titleElement = document.getElementById("produtos-mais-vendidos-title");
+            if (titleElement.textContent.includes("Produtos Quentes")) {
+                mostrarProdutosQuentes();
+            } else if (titleElement.textContent.includes("Minha Lista de Desejos")) {
+                mostrarListaDesejos();
+            } else {
+                let currentTabFilter = null;
+                if (titleElement.textContent.includes("Produtos em \"")) {
+                    currentTabFilter = titleElement.textContent.split('"')[1];
+                }
+                mostrarProdutos(currentTabFilter); // Re-renderiza para atualizar visualmente
+            }
+        }
+
+        function removerMonitoramento(produtoId) {
+            let monitoredProducts = JSON.parse(localStorage.getItem(`monitorados_${currentUser}`)) || [];
+            monitoredProducts = monitoredProducts.filter(monitoredProd => monitoredProd.id !== produtoId);
+            localStorage.setItem(`monitorados_${currentUser}`, JSON.stringify(monitoredProducts));
+            alert("Produto removido do monitoramento.");
+            mostrarMonitoramento(); // Recarrega a lista de monitoramento
+            // Também re-renderiza a tela de produtos para remover o indicador LIVE se estiver nela
+            const titleElement = document.getElementById("produtos-mais-vendidos-title");
+            if (titleElement.textContent.includes("Produtos Quentes")) {
+                mostrarProdutosQuentes();
+            } else if (titleElement.textContent.includes("Minha Lista de Desejos")) {
+                mostrarListaDesejos();
+            } else {
+                let currentTabFilter = null;
+                if (titleElement.textContent.includes("Produtos em \"")) {
+                    currentTabFilter = titleElement.textContent.split('"')[1];
+                }
+                mostrarProdutos(currentTabFilter); // Re-renderiza para atualizar visualmente
+            }
+        }
+
+        function atualizarMonitoramentoContador() {
+            let monitoredProducts = JSON.parse(localStorage.getItem(`monitorados_${currentUser}`)) || [];
+            const totalMonitoradosElement = document.getElementById("totalMonitoradosValue");
+            if (totalMonitoradosElement) {
+                 totalMonitoradosElement.textContent = monitoredProducts.length;
+            }
+        }
+
+        function toggleDetalhes(botao, produtoId) {
+            const card = botao.closest(".card");
+            const detalhesDiv = card.querySelector(".detalhes-container");
+            const produto = produtos.find(p => p.id === produtoId);
+            if (!produto) return;
+
+            if (detalhesDiv.classList.contains("show")) {
+                detalhesDiv.classList.remove("show");
+                detalhesDiv.innerHTML = "";
+            } else {
+                let marketplacesHTML = '';
+                if (produto.marketplaces && produto.marketplaces.length > 0) {
+                    marketplacesHTML = '<h4>Marketplaces:</h4><div class="marketplace-list">';
+                    produto.marketplaces.forEach(mp => {
+                        let arrowSrc = ICON_URLS.arrow_straight;
+                        let arrowClass = "icon-colored arrow-straight-icon";
+                        if (mp.status === "up") {
+                            arrowSrc = ICON_URLS.arrow_up;
+                            arrowClass = "icon-colored";
+                        }
+                        else if (mp.status === "down") {
+                            arrowSrc = ICON_URLS.arrow_down;
+                            arrowClass = "icon-colored";
+                        }
+                        marketplacesHTML += `<div class="marketplace-item">${mp.nome} <img src="${arrowSrc}" alt="Status Arrow" class="${arrowClass}"> R$ ${mp.preco}</div>`;
+                    });
+                    marketplacesHTML += '</div>';
+                }
+                let historicoPrecosHTML = '';
+                if (produto.historicoPrecos && produto.historicoPrecos.length > 0) {
+                    historicoPrecosHTML = '<div class="price-chart-simulated"><h4>Gráfico de Preços (Simulado):</h4>';
+                    produto.historicoPrecos.forEach(item => {
+                        historicoPrecosHTML += `<p>Data: <strong>${item.date}</strong> - Preço: <strong>R$ ${item.price}</strong></p>`;
+                    });
+                    historicoPrecosHTML += '</div>';
+                }
+                detalhesDiv.innerHTML = `
+                    <div class="description">${produto.descricao || "Sem descrição disponível."}<img src="${ICON_URLS.copy}" class="copy-icon" onclick="copyToClipboard('${produto.descricao || 'Sem descrição disponível.'}', this)" title="Copiar Descrição"></div>
+                    ${marketplacesHTML}
+                    ${historicoPrecosHTML}
+                `;
+                detalhesDiv.classList.add("show");
+                detalhesDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
+
+        // --- Lista de Desejos / Favoritos ---
+        function toggleFavorito(produtoId) {
+            const produto = produtos.find(p => p.id === produtoId);
+            if (!produto) return;
+
+            const isFavorito = favoritos.some(fav => fav.id === produto.id);
+
+            if (isFavorito) {
+                favoritos = favoritos.filter(fav => fav.id !== produto.id);
+                alert(`"${produto.nome}" removido da sua Lista de Desejos.`);
+            } else {
+                favoritos.push({ id: produto.id, dataAdicao: new Date().toISOString().slice(0, 10), alertaPreco: null });
+                alert(`"${produto.nome}" adicionado à sua Lista de Desejos!`);
+            }
+            localStorage.setItem(`favoritos_${currentUser}`, JSON.stringify(favoritos));
+            renderMenuTabs(); // Re-renderiza o menu para atualizar o link da lista de desejos (se houver)
+            // Re-renderiza a tela atual para atualizar o estado do ícone
+            const titleElement = document.getElementById("produtos-mais-vendidos-title");
+            if (titleElement.textContent.includes("Minha Lista de Desejos")) {
+                mostrarListaDesejos();
+            } else if (titleElement.textContent.includes("Produtos Quentes")) {
+                mostrarProdutosQuentes();
+            } else {
+                mostrarProdutos(); // Re-renderiza para atualizar visualmente
+            }
+        }
+
+        function mostrarListaDesejos() {
+            const container = document.getElementById("produtosContainer");
+            container.innerHTML = "";
+            document.getElementById("monitoramentoContainer").style.display = "none";
+            document.getElementById("monitoramento").style.display = "none";
+            document.getElementById("painelAdmin").style.display = "none"; // Garante que o painel admin esteja escondido
+            document.getElementById("produtos-mais-vendidos-title").style.display = "flex";
+            document.getElementById("produtos-mais-vendidos-title").innerHTML = `<img src="${ICON_URLS.heart}" alt="Heart Icon" class="icon-colored"> Minha Lista de Desejos`;
+
+            if (favoritos.length === 0) {
+                container.innerHTML = `<p style="text-align: center; width: 100%; color: var(--tertiary-text-color);">Sua lista de desejos está vazia.</p>`;
+                return;
+            }
+            favoritos.forEach((favItem, i) => {
+                const produto = produtos.find(p => p.id === favItem.id);
+                if (!produto) return;
+
+                const card = document.createElement("div");
+                card.className = "card";
+
+                const alertaHtml = favItem.alertaPreco ?
+                    `<p style="font-size:13px; color: var(--blue-highlight); margin-top: 10px;"><img src="${ICON_URLS.price_alert}" style="height:16px; width:16px; margin-right:5px; filter: invert(100%); vertical-align: middle;"> Alerta definido para: R$ ${favItem.alertaPreco}</p>` :
+                    `<button class="btn btn-purple" style="background-color: var(--btn-purple); margin-top: 5px; display: flex; align-items: center; justify-content: center;" onclick="definirAlertaPreco('${produto.id}')"><img src="${ICON_URLS.price_alert}" style="height:16px; width:16px; margin-right:5px; filter: invert(100%);"> Definir Alerta</button>`;
+                
+                // Indicador LIVE para produtos monitorados que também estão na lista de favoritos
+                const isMonitored = monitoredProducts.some(monitoredProd => monitoredProd.id === produto.id);
+                const liveIndicatorHTML = !isAdmin && isMonitored ? `<div class="live-indicator">LIVE</div>` : '';
+
+                // Ícone de Fogo para produtos da aba "Quentes" (se o admin marcou)
+                const hotIconHTML = produto.tabs && produto.tabs.includes("Quentes") ?
+                    `<span class="hot-icon">🔥</span>` : '';
+
+                card.innerHTML = `
+                    <div style="position: relative;">
+                        <img src="${produto.imagem}" alt="${produto.nome}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+                        <div class="favorite-icon favorited" onclick="toggleFavorito('${produto.id}')">
+                            <img src="${ICON_URLS.heart}" alt="Favorite Icon">
+                        </div>
+                        ${liveIndicatorHTML}
+                        ${hotIconHTML}
+                    </div>
+                    <h3>${produto.nome}<img src="${ICON_URLS.copy}" class="copy-icon" onclick="copyToClipboard('${produto.nome}', this)" title="Copiar Título"></h3>
+                    <div class="price">Preço atual: R$${produto.preco}<img src="${ICON_URLS.copy}" class="copy-icon" onclick="copyToClipboard('R$${produto.preco}', this)" title="Copiar Preço"></div>
+                    <div class="buttons">
+                        <button class="btn btn-green" onclick="alert('Comprar: ${produto.nome}')">Comprar</button>
+                        <button class="btn btn-purple" onclick="toggleDetalhes(this, '${produto.id}')">Detalhes</button>
+                        <button class="btn btn-red" onclick="toggleFavorito('${produto.id}')">Remover da Lista</button>
+                    </div>
+                    ${alertaHtml}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function definirAlertaPreco(produtoId) {
+            const precoAlvoStr = prompt("Para qual preço você quer definir o alerta?");
+            const precoAlvo = parseFloat(precoAlvoStr?.replace(",", "."));
+
+            if (isNaN(precoAlvo) || precoAlvo <= 0) {
+                alert("Preço inválido. Por favor, digite um número maior que zero.");
+                return;
+            }
+
+            const favIndex = favoritos.findIndex(fav => fav.id === produtoId);
+            if (favIndex !== -1) {
+                favoritos[favIndex].alertaPreco = precoAlvo.toFixed(2);
+                localStorage.setItem(`favoritos_${currentUser}`, JSON.stringify(favoritos));
+                alert(`Alerta de preço para R$ ${precoAlvo.toFixed(2)} definido para "${produtos.find(p => p.id === produtoId)?.nome || 'este produto'}".`);
+                mostrarListaDesejos(); // Recarrega a lista de desejos para exibir o alerta
+            }
+        }
+        // --- Fim Lista de Desejos / Favoritos ---
+
+        // Initial calls
+        applySavedTheme();
+        renderMenuTabs();
+        mostrarProdutos(); // Mostra a tela de produtos por padrão
+        atualizarMonitoramentoContador(); // Garante que o contador esteja atualizado ao carregar
+
+
+        // Search Suggestions
+        const suggestionsData = ["Fone Bluetooth Xiaomi", "Relógio Smartwatch Pro", "Mochila Antifurto", "Webcam HD", "Teclado Mecânico RGB"]; // Adicione mais sugestões aqui
+
+        function showSuggestions() {
+            const input = document.getElementById("searchInput");
+            const list = document.getElementById("suggestions");
+            const value = input.value.toLowerCase();
+            list.innerHTML = ""; // Limpa sugestões anteriores
+
+            if (value === "") {
+                list.style.display = "none";
+                return;
+            }
+
+            const matches = suggestionsData.filter(item => item.toLowerCase().includes(value));
+            
+            matches.forEach(item => {
+                const div = document.createElement("div");
+                div.textContent = item;
+                div.onclick = () => {
+                    input.value = item;
+                    list.style.display = "none";
+                    alert(`Buscando por: ${item}`);
+                    // Aqui você poderia adicionar a lógica para realmente buscar o produto
+                    // por exemplo, chamando mostrarProdutos(item) ou uma função de busca dedicada
+                };
+                list.appendChild(div);
+            });
+            list.style.display = matches.length ? "block" : "none";
+        }
+
+        // Menu hambúrguer
+        function toggleMenu(el) {
+            el.classList.toggle("active");
+            document.getElementById("menu").classList.toggle("active");
+            document.getElementById("adminMenu").classList.toggle("active"); // Alterna também o menu admin
+        }
+    </script>
+</body>
+</html>
